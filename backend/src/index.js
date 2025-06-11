@@ -40,31 +40,10 @@ app.use("/api/messages", messageRoutes);
 if(process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../frontend/dist")));
 
-  app.get("/*", (req, res) => {
+  app.get("/{*any}", (req, res) => {
     res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
   });
 }
-
-// debug‐only: list every registered route
-console.log("🚀 Express routes:");
-app._router.stack.forEach((layer) => {
-  if (layer.route) {
-    // direct routes
-    const methods = Object.keys(layer.route.methods)
-      .map((m) => m.toUpperCase())
-      .join(",");
-    console.log(`${methods}\t${layer.route.path}`);
-  } else if (layer.name === "router") {
-    // router middleware
-    layer.handle.stack.forEach((sub) => {
-      const methods = Object.keys(sub.route.methods)
-        .map((m) => m.toUpperCase())
-        .join(",");
-      console.log(`${methods}\t${layer.regexp} → ${sub.route.path}`);
-    });
-  }
-});
-
 
 server.listen(PORT , () => {
     console.log('Server is running on port : ' + PORT);
